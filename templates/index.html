@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Language Detector</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        padding: 30px;
+        background-image: url("../images/images (1).jpeg"); /* Add your background image here */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: rgba(255, 255, 255, 0.5); /* Transparent overlay */
+        background-blend-mode: overlay;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .content-container {
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.9
+        ); /* White background with some transparency */
+        border: 2px solid #17a2b8; /* Light blue border */
+        border-radius: 15px;
+        padding: 40px;
+        margin: 30px auto;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+      }
+
+      .content-container:hover {
+        transform: scale(1.05); /* Slight zoom on hover */
+      }
+
+      .display-4 {
+        color: #17a2b8;
+        font-weight: 600;
+        margin-bottom: 30px;
+      }
+
+      #videoContainer {
+        margin-top: 20px;
+      }
+
+      #videoFeed {
+        max-width: 100%;
+        height: auto;
+        border: 2px solid #17a2b8; /* Light blue border */
+        border-radius: 10px;
+      }
+
+      #prediction {
+        font-size: 28px;
+        font-weight: 600;
+        margin-top: 20px;
+        color: #343a40;
+      }
+
+      .tts-controls {
+        position: fixed;
+        right: 20px;
+        top: 50px;
+        background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent */
+        padding: 20px;
+        border: 2px solid #17a2b8;
+        width: 300px;
+        border-radius: 10px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .tts-controls h5 {
+        color: #17a2b8;
+        font-weight: 600;
+        margin-bottom: 15px;
+      }
+
+      .tts-controls label {
+        font-weight: 500;
+        color: #343a40;
+      }
+
+      .tts-controls select,
+      .tts-controls input,
+      .tts-controls textarea {
+        width: 100%;
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+      }
+
+      .tts-controls button {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+      }
+
+      .tts-controls button.btn-primary {
+        background-color: #17a2b8;
+        color: #fff;
+      }
+
+      .tts-controls button.btn-primary:hover {
+        background-color: #138496;
+      }
+
+      .tts-controls button.btn-secondary {
+        background-color: #6c757d;
+        color: #fff;
+      }
+
+      .tts-controls button.btn-secondary:hover {
+        background-color: #5a6268;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container content-container">
+      <h1 class="display-4">Sign Language Detection</h1>
+      <div id="videoContainer">
+        <img
+          id="videoFeed"
+          src="/video_feed"
+          alt="Video stream will load here."
+        />
+      </div>
+      <div id="prediction">No sign detected yet...</div>
+    </div>
+
+    <!-- Text-to-Speech Controls -->
+    <div class="tts-controls">
+      <h5>Text to Speech</h5>
+
+      <!-- Select Voice -->
+      <label for="voiceSelect">Voice:</label>
+      <select id="voiceSelect"></select>
+
+      <!-- Pitch Control -->
+      <label for="pitchRange">Pitch:</label>
+      <input
+        type="range"
+        id="pitchRange"
+        min="0"
+        max="2"
+        value="1"
+        step="0.1"
+      />
+
+      <!-- Font Size Control -->
+      <label for="fontSizeRange">Font Size:</label>
+      <input
+        type="range"
+        id="fontSizeRange"
+        min="10"
+        max="40"
+        value="24"
+        step="1"
+      />
+
+      <!-- Text Input for User to Type -->
+      <label for="userInputText">Type Text to Speak:</label>
+      <textarea
+        id="userInputText"
+        rows="3"
+        placeholder="Type something here..."
+      ></textarea>
+
+      <!-- Speak Buttons -->
+      <button class="btn btn-primary" id="speakButton">
+        Speak Detected Text
+      </button>
+      <button class="btn btn-secondary" id="speakUserInput">
+        Speak User Input
+      </button>
+    </div>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Web Speech API for Text-to-Speech -->
+    <script>
+      const voiceSelect = document.getElementById("voiceSelect");
+      let voices = [];
+
+      function populateVoiceList() {
+        voices = speechSynthesis.getVoices();
+        voiceSelect.innerHTML = "";
+        voices.forEach((voice, i) => {
+          const option = document.createElement("option");
+          option.value = i;
+          option.textContent = `${voice.name} (${voice.lang})`;
+          voiceSelect.appendChild(option);
+        });
+      }
+
+      populateVoiceList();
+      if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = populateVoiceList;
+      }
+
+      const speakButton = document.getElementById("speakButton");
+      const speakUserInputButton = document.getElementById("speakUserInput");
+      const predictionText = document.getElementById("prediction");
+      const pitchRange = document.getElementById("pitchRange");
+      const fontSizeRange = document.getElementById("fontSizeRange");
+      const userInputText = document.getElementById("userInputText");
+
+      speakButton.addEventListener("click", () => {
+        const utterance = new SpeechSynthesisUtterance(
+          predictionText.textContent
+        );
+        const selectedVoice = voices[voiceSelect.value];
+        utterance.voice = selectedVoice;
+        utterance.pitch = pitchRange.value;
+
+        speechSynthesis.speak(utterance);
+      });
+
+      speakUserInputButton.addEventListener("click", () => {
+        const utterance = new SpeechSynthesisUtterance(userInputText.value);
+        const selectedVoice = voices[voiceSelect.value];
+        utterance.voice = selectedVoice;
+        utterance.pitch = pitchRange.value;
+
+        speechSynthesis.speak(utterance);
+      });
+
+      fontSizeRange.addEventListener("input", () => {
+        predictionText.style.fontSize = `${fontSizeRange.value}px`;
+      });
+
+      setInterval(function () {
+        fetch("/get_prediction")
+          .then((response) => response.json())
+          .then((data) => {
+            predictionText.textContent = data.prediction;
+          });
+      }, 1000);
+    </script>
+    <footer class="footer">
+      <img src=".../images/istockphoto-1124755066-1024x1024.jpg" alt="Logo" />
+      <strong>&copy; 2024 Copyright by Fianyo</strong>
+    </footer>
+  </body>
+</html>
