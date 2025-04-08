@@ -58,8 +58,10 @@ It showcases how the system translates both text-to-speech and sign-to-speech co
 Users can customize voice output by selecting font size, voice type, pitch, and language.
 This feature enhances accessibility and inclusivity in financial services for the hearing-impaired.
 
+📄 For Full Project Documentation
+If you would like access to the complete documentation of this project, feel free to contact me via email:
+📧 mawukofianyo8@gmail.com
 
 
 
 
-![Image](https://github.com/user-attachments/assets/388facb9-633e-4a5f-a567-2a682dd1c2ee)
