@@ -17,7 +17,7 @@ flask
 This gesture is commonly used as a greeting in both spoken and sign languages.
 It initiates interaction between the user and the system.
 Detected and labeled as “Hello” by the AI model.
-<!-- Uploading "Screenshot 2025-04-07 181605.png"... -->
+![Image](https://github.com/user-attachments/assets/5966305f-1209-4e78-82be-2cdd5ce05fff)
 
 2. Yes Sign
 📸 Nodding motion or a specific hand sign indicating agreement.
