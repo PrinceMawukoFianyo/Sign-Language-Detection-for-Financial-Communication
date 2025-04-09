@@ -9,7 +9,7 @@ import os
 app = Flask(__name__)
 
 # Load model
-MODEL_PATH = ''
+MODEL_PATH = './'
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(f"Model file not found at {MODEL_PATH}")
 model_dict = pickle.load(open(MODEL_PATH, 'rb'))
@@ -19,7 +19,7 @@ if model is None:
     raise ValueError("Model not found in the loaded model dictionary.")
 
 # Load labels dynamically from labels.json
-LABELS_PATH = './labels.json'
+LABELS_PATH = './'
 if not os.path.exists(LABELS_PATH):
     raise FileNotFoundError(f"Labels file not found at {LABELS_PATH}")
 
