@@ -9,7 +9,7 @@ import os
 app = Flask(__name__)
 
 # Load model
-MODEL_PATH = './model.p'
+MODEL_PATH = ''
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(f"Model file not found at {MODEL_PATH}")
 model_dict = pickle.load(open(MODEL_PATH, 'rb'))
