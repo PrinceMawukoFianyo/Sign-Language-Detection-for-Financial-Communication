@@ -3,7 +3,7 @@ import os
 import cv2
 
 
-DATA_DIR = './gina'
+DATA_DIR = './'
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
